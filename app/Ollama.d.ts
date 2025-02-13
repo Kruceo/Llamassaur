@@ -1,0 +1,23 @@
+type OllamaRoles = "user" | "assistant"
+
+interface OllamaHistoryItem {
+  role: OllamaRoles,
+  images?: string[],
+  __extra?: { rawImages?: string[] }
+  content: string,
+  errored: boolean
+}
+
+interface OllamaChatResponseChunk {
+  model: string,
+  message: OllamaHistoryItem,
+  done: boolean,
+  created_at: string
+}
+
+interface OllamaPullResponseChunk {
+  status: string,
+  digest?: string,
+  total?: number,
+  completed?: number
+}

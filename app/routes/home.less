@@ -1,0 +1,108 @@
+@import "../pallete.less";
+
+main {
+    width: 100%;
+    // min-height: 100vh;
+
+    nav.chat-list {
+        display: none;
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 300px;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+
+        // padding: 8px;
+        >.inner {
+            // border-radius: 8px;
+            width: 100%;
+            height: 100%;
+            background-color: darken(@background, 5);
+            border-right: @border;
+        }
+    }
+
+    .main-content {
+        margin-top: 52px;
+        width: 100%;
+
+        .chat {
+            padding: 50px 150px;
+            width: 100%;
+            height: 100%;
+            gap: 24px;
+            display: flex;
+            flex-direction: column;
+
+            .chat-item:last-of-type {
+                margin-bottom: 150px;
+            }
+        }
+
+        @media @tablet {
+            .chat {
+                padding: 50px 10px;
+            }
+        }
+    }
+    .t-dock {
+        z-index: 100;
+        // border-bottom: @border;
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 52px;
+        background-color: darken(@background, 0);
+        display: flex;
+        align-items: center;
+        padding: 0px 150px;
+        outline: none;
+        
+    }
+    .b-dock {
+        z-index: 100;
+        position: fixed;
+        left: calc(50% + 0px);
+        width: 100%;
+
+        // left: calc(50% + 150px);
+        // width: calc(100% - 300px);
+
+        top: 100%;
+        transform: translate(-50%, -100%);
+        margin: 0;
+
+        background:linear-gradient(transparent 0%,@background 0%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 30px 150px;
+
+        @media @tablet {
+            padding: 50px 10px;
+        }
+    }
+    &.opened {
+        .main-content {
+            margin-left: 300px!important;
+            width: calc(100% - 300px);
+        }
+
+        nav.chat-list {
+            position: fixed;
+            width: 300px;
+        }
+        .t-dock{
+            margin-left: 300px!important;
+            width: calc(100% - 300px);
+
+        }
+        .b-dock {
+            left: calc(50% + 150px);
+            width: calc(100% - 300px);
+        }   
+    }
+}

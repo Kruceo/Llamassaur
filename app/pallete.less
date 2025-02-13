@@ -1,0 +1,68 @@
+@color1: #f5cac3;
+@onColor1: #222;
+
+@color2: #f6bd60;
+@onColor2: darken(@color2, 58);
+
+@color3: #f7ede2;
+@onColor3: #000;
+
+@color4: #84a59d;
+@onColor4: darken(@color4, 58);
+
+@color5: #f28482;
+
+
+@background: @color3;
+@onBackground: @onColor3;
+
+
+
+
+
+
+
+@color1: #eb5e28;
+@onColor1: white;
+
+@color2: #403d39;//#84a59d;
+@onColor2: #fffc;
+
+@color3: #403d39;
+@onColor3: #000;
+
+@color4: #252422;//#f6bd60;
+@onColor4: #fffc;
+
+@color5: #f28482;
+
+@background: darken(#252422,50);//#f7ede2;
+@onBackground: #fff;
+
+
+
+// @color4:#565659;
+// @onColor4:#ccb;
+// @color2:#646469;
+// @onColor2:#ccb;
+// @color3:#696979;
+// @onColor3:#ccb;// @color3:#fefedf;
+
+@border: 1px solid lighten(@background,15);
+
+@desktop: ~ "(max-width: 968px)";
+
+@laptop: ~ "(max-width: 768px)";
+
+@tablet: ~ "(max-width: 468px)";
+
+@mobile: ~ "(max-width: 268px)";
+
+@import "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=attach_file";
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}

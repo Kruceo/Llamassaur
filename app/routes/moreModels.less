@@ -1,0 +1,43 @@
+@import "../pallete.less";
+
+main {
+    padding: 0px 150px;
+
+    .list {
+        display: grid;
+        gap: 10px;
+
+        button {
+            display: flex;
+            align-items: center;
+            height: 60px;
+            gap: 8px;
+            color: @onBackground;
+            background-color: transparent;
+            border: none;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: start;
+
+            .tag {
+                text-transform: uppercase;
+                background: linear-gradient(45deg, @color1, @color5);
+                color: @onColor1;
+                padding: 4px;
+                margin-left: 4px;
+                border-radius: 4px;
+            }
+
+            .status {
+                text-transform: capitalize;
+                border: @border;
+                padding: 8px;
+                border-radius: 8px;
+            }
+
+            &:hover {
+                background-color: #fff2;
+            }
+        }
+    }
+}

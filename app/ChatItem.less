@@ -1,0 +1,381 @@
+@import "./pallete.less";
+
+@keyframes list-open {
+    0%{
+        opacity: 0%;
+        transform: translate(0%,-25px);
+        scale: 0;
+    }
+    100%{
+        opacity: 100%;
+        transform: translate(0%,0px);
+        scale: 1;
+    }
+}
+
+.chat-item {
+    animation: list-open 350ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 700ms 1 forwards;
+    opacity: 0;
+    animation-fill-mode: forwards;
+    background-color: @color4;
+    width: fit-content;
+    max-width: 89%;
+    padding: 16px;
+    border-radius: 0px 16px 16px 16px;
+    transition: background-color 100ms ease-in-out;
+    // white-space: break-spaces;
+    * {
+        color: @onColor4;
+        --loader-color: @onColor4;
+    }
+
+    think {
+        display: none;
+    }
+
+    &.errored {
+        outline: #c44 1px solid;
+    }
+
+    &.writing {
+        // outline: 1px solid black;
+        // animation: wi forwards infinite 500ms;
+    }
+
+    &:hover{
+        opacity: 1;
+        // background-color: lighten(@color4,10);
+    }
+
+    &.user {
+        animation: list-open 350ms cubic-bezier(0.55, 0.085, 0.68, 0.53) 0s 1 forwards;
+        margin-left: auto;
+        border-radius: 16px 0px 16px 16px;
+        background-color: @color2;
+        * {
+            color: @onColor2;
+            --loader-color: @onColor2;
+        }
+        &:hover{
+            // background-color: lighten(@color2,10);
+        }
+    }
+  
+}
+
+@keyframes wi {
+    0% {
+        outline: 0px solid red;
+        outline-offset: 0px;
+    }
+
+    50% {
+        outline: 2px solid red;
+        outline-offset: 5px;
+    }
+
+    100% {
+        outline: 0px solid red;
+        outline-offset: 10px;
+    }
+}
+
+.markdown *{
+    white-space: break-spaces;
+}
+/* ---------------- HEADERS => all lines that starts with # ------------------ */
+.markdown .header1 {
+    letter-spacing: -0.02em;
+    line-height: 40px;
+    font-size: 32px;
+    position: relative;
+    font-weight: 600;
+    outline: none;
+}
+
+.markdown .header2 {
+    letter-spacing: -0.02em;
+    line-height: 40px;
+    font-size: 28px;
+    position: relative;
+    font-weight: 600;
+    outline: none;
+    
+}
+
+.markdown h2.header2::after{
+    content: "";
+    display: block;
+    width: 100%;
+    height: 5px;
+    background-color: #343541;
+}
+
+.markdown .header3 {
+    // background: linear-gradient(-25deg,@color1 80%,@color3);
+    background-color: @color1;
+    color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    line-height: 40px;
+    font-size: 24px;
+    position: relative;
+    font-weight: 600;
+    outline: none;
+}
+
+.markdown .header4 {
+    /* #### text */
+    font-weight: normal;
+    font-size: auto;
+}
+
+.markdown .header5 {
+    /* #### text */
+    font-weight: normal;
+    font-size: auto;
+}
+
+.markdown .header6 {
+    /* #### text */
+    font-weight: normal;
+    font-size: auto;
+}
+
+
+/* ---------------- BOLD => ** example ** ------------------ */
+.markdown .bold {
+    /* if you not want the default bold uncomment this:*/
+    /* font-weight: initial !important; */
+    font-weight: bold;
+}
+
+
+/* ---------------- ITALIC => * example * or _example_ ------------------ */
+.markdown .italic {
+    /* if you not want the default italic uncomment this:*/
+    /* font-style: initial!important; */
+    font-style: italic;
+}
+
+
+/* ---------------- SCRATCHED => ~~ example ~~ ------------------ */
+.markdown .italic {
+    /* if you not want the default italic uncomment this:*/
+    /* font-style: initial!important; */
+}
+
+
+/* ---------------- IMAGE => ![alt](http://example.com/img.png) ------------------ */
+.markdown img {
+    // padding-top: 10px;
+    // padding-bottom: 10px;
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+
+/* ---------------- LINE => --- ------------------ */
+.markdown .line {
+    background-color: #000;
+    height: 4px;
+    opacity: .2;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+
+/* ---------------- LIST => .1 example ------------------ */
+.markdown.list-item {
+    color: #d1d3dc
+}
+
+.markdown.list-item .num.left::before {
+    content: "";
+}
+
+.markdown.list-item .num {
+    color: #d1d3dc88;
+}
+
+.markdown.list-item .num.right::before {
+    content: ".";
+}
+
+/* ---------------- LIST => * or - example text ------------------ */
+.markdown.list-dot {
+    color: red;
+    opacity: 0.1;
+    font-size: 20px;
+}
+
+.markdown.list-dot::before {
+    content: "\2022 \ ";
+    color: #d1d3dc88;
+}
+
+.markdown.list-dot.level1::before {
+    content: "\25E6 \ ";
+    margin-left: 20px;
+}
+
+.markdown.list-dot.level2::before {
+    content: "\25E6 \ ";
+    margin-left: 40px;
+}
+
+.markdown.list-dot.level3::before {
+    content: "\25E6 \ ";
+    margin-left: 60px;
+}
+
+.markdown.list-dot.level4::before {
+    content: "\25E6 \ ";
+    margin-left: 80px;
+}
+
+
+/* ---------------- QUOTE BLOCK => > a good example! ------------------ */
+.markdown.quote {
+    border-left: 3px #d1d3dc solid;
+    padding-left: 3px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+/* ---------------- TASK => [x] ------------------ */
+.markdown.task {
+    display: inline-block;
+    border: 2px #d1d3dc solid;
+    padding-left: 3px;
+    font-weight: bold;
+    width: fit-content;
+    width: -moz-fit-content;
+    position: relative;
+}
+
+.markdown.task::before {
+    content: "\2B9C \2B9C";
+    white-space: pre-wrap;
+    color: transparent;
+}
+
+.markdown.task>.inner {
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.markdown.task.checked>.inner::before {
+    content: "\2713";
+}
+
+
+/* ---------------- CODE BLOCK =>  ```example``` ------------------ */
+.markdown.code-block {
+    color: #d1d3dc;
+    font-family: monospace;
+    margin: 20px 0 20px 0;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.markdown.code-block .language {
+    padding: 7px;
+
+    font-size: 10px;
+    background: #343541;
+    text-transform: lowercase;
+}
+
+.markdown.code-block .code {
+    display: block;
+    white-space: pre;
+    width: 100%;
+
+    * {
+        margin: 0;
+    }
+
+    padding: 7px;
+    background-color: #000000;
+}
+
+
+/* ---------------- TAB BLOCK =>    example tabbed code ------------------ */
+.markdown.tab-block {
+    color: #d1d3dc;
+    font-family: monospace;
+    margin: 20px 0 20px 0;
+    border-radius: 7px;
+    overflow: auto;
+}
+
+.markdown.tab-block .code {
+    width: max-content;
+    min-width: 97.749996%;
+    padding: 7px;
+    background-color: #000;
+}
+
+
+/* ---------------- INLINE CODE => `example` ------------------ */
+.markdown.inline-code {
+    font-weight: bolder;
+    color: #fff;
+    font-family: monospace;
+    overflow-x: auto;
+}
+
+
+/* ---------------- ANCHOR => [text](http://example.com) ------------------ */
+.markdown.anchor {
+    color: #fff;
+    font-weight: bold;
+}
+
+.markdown a {
+    /* case use direct html code */
+    color: #fff;
+    font-weight: bold;
+}
+
+
+/* ---------------- INLINE CODE => |example1|example2| ------------------ */
+.markdown.table {
+    margin: 0;
+    width: fit-content;
+    border-radius: 6px;
+    border: white 1px solid;
+    overflow: hidden;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border-spacing: 0;
+}
+
+.markdown.table .row.header {
+    background-color: #fff3;
+    color: white;
+    font-weight: bold;
+}
+
+.markdown.table .cel {
+    color: white;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
+    padding: 5px;
+}
+
+.markdown.table .cel.bottom {
+    border-bottom: none;
+}
+
+.markdown.table .cel.right {
+    border-right: none;
+}

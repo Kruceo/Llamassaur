@@ -1,0 +1,100 @@
+@import "./pallete.less";
+
+.chat-input-frame {
+    width: 100%;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 16px;
+    border: @border;
+    overflow-y: hidden;
+    display: flex;
+    align-items: center;
+    .chat-input{
+        font-family: Lexend;
+        color: @onBackground;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        overflow: hidden;
+        // background-color: red;
+        resize: none;
+        appearance: none;
+        width: 100%;
+    }
+    label{
+        display: block;
+        width: fit-content;
+        height: fit-content;
+        margin-right: 8px;
+        span{
+            display: block;
+            rotate: 45deg;
+        }
+        cursor: pointer;
+        transition: transform 100ms ease-in-out;
+        &:hover{
+            transform: scale(1.1);
+        }
+    }
+    img{
+        animation: img-intro 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        width: 25px;
+        border-radius: 4px;
+    }
+    &.send-anim {
+        animation: beat 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    &.recuse-anim{
+        animation: wiggle 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+}
+
+@keyframes img-intro {
+    0% {
+        transform: translate(0px,-0px) scale(0);
+    }
+
+    75% {
+        transform: translate(0px,-5px) scale(1);
+    }
+
+    100% {
+        transform: translate(0px,0px)
+    }
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotateZ(0deg);
+    }
+
+    25% {
+        transform: rotateZ(1deg);
+    }
+
+    50% {
+        transform: rotateZ(-1deg);
+    }
+
+    75% {
+        transform: rotateZ(0.5deg);
+    }
+
+    100% {
+        transform: rotateZ(0deg);
+    }
+}
+
+@keyframes beat {
+    0% {
+        transform: translate(0px,-0px);
+    }
+
+    75% {
+        transform: translate(0px,-25px) scale(1);
+    }
+
+    100% {
+        transform: translate(0px,0px)
+    }
+}
