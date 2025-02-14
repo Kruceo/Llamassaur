@@ -9,12 +9,12 @@ interface OllamaHistoryItem {
 }
 
 interface OllamaChatResponseChunk {
+  error?: string
   model: string,
   message: OllamaHistoryItem,
   done: boolean,
   created_at: string
 }
-
 interface OllamaPullResponseChunk {
   status: string,
   digest?: string,

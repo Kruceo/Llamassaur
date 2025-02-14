@@ -3,12 +3,20 @@ import "./ChatInput.less";
 
 interface ChatInputAttachment { rawUrl: string, url: string }
 
-export default function ChatInput(props: { onSubmit: (values: { text: string, attachments: ChatInputAttachment[] }) => Promise<boolean> }) {
+interface ChatInputProps {
+    disableAttachments?: boolean,
+    disableAnimations?: boolean
+    placeholder?: string,
+    onSubmit: (values: { text: string, attachments: ChatInputAttachment[] }) => Promise<boolean>
+}
+
+
+export default function ChatInput(props: ChatInputProps) {
     const [shiftPressed, setShiftPressed] = useState(false)
     const [playAnimation, setPlayAnimation] = useState("none")
     const [animationTimeout, setAnimationTimeout] = useState<NodeJS.Timeout>()
     const [attachments, setAttachments] = useState<ChatInputAttachment[]>([])
-
+    const [blocked, setBlocked] = useState(false)
     useEffect(() => {
         clearTimeout(animationTimeout)
         const to = setTimeout(() => {
@@ -18,15 +26,23 @@ export default function ChatInput(props: { onSubmit: (values: { text: string, at
     }, [playAnimation])
 
     return <>
-        <div className={`chat-input-frame ${playAnimation}-anim`}>
-            <label htmlFor="attachments-input">
-                <span className="material-symbols-outlined">
-                    attach_file
-                </span>
-            </label>
-            <textarea className={`chat-input`} name="sentence" placeholder="Write here bro!"
+        <div className={`chat-input-frame ${blocked ? "blocked" : ""} ${playAnimation}${props.disableAnimations ? "blocked" : ""}-anim`}>
+            {
+                props.disableAttachments ? null :
+                    <label htmlFor="attachments-input">
+                        <span className="material-symbols-outlined">
+                            attach_file
+                        </span>
+                    </label>
+            }
+            {/* {blocked ? "true" : "false"} */}
+            <textarea className={`chat-input`} name="sentence" placeholder={props.placeholder ?? "Type here!"}
                 rows={1}
                 onKeyUp={async (e) => {
+                    if (blocked) {
+                        e.preventDefault()
+                        return;
+                    }
                     if (e.key == "Enter" && !shiftPressed) {
                         if (e.currentTarget.value.trim() == "") {
                             setPlayAnimation("recuse")
@@ -34,15 +50,23 @@ export default function ChatInput(props: { onSubmit: (values: { text: string, at
                         }
                         e.preventDefault();
                         setPlayAnimation("send")
-                        props.onSubmit({ text: e.currentTarget.value, attachments })
-                        e.currentTarget.value = ''
+                        setBlocked(true)
+                        const target = e.target as HTMLInputElement
+                        await props.onSubmit({ text: target.value, attachments })
+                        // if (e.currentTarget)
+                        target.value = ''
                         setAttachments([])
+                        setBlocked(false)
                     }
                     if (e.key == "Shift") {
                         setShiftPressed(false)
                     }
                 }}
                 onKeyDown={(e) => {
+                    if (blocked) {
+                        e.preventDefault()
+                        return;
+                    }
                     if (e.key == "Enter" && !shiftPressed) e.preventDefault()
                     if (e.key == "Shift") setShiftPressed(true)
                 }}

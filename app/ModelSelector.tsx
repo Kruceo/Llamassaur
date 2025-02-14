@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./ModelSelector.less";
 import { Link } from "react-router";
-import { address, port, proto } from "./backend";
+import {OllamaServerContext} from "./OllamaServerContext";
 
 export default function (props: { onChange?: (model: string) => void, onLoad?: (model: string) => void }) {
+    const { ollamaURL } = useContext(OllamaServerContext)
     const [availableModels, setAvailableModels] = useState<string[]>([])
     const [model, setModel] = useState("")
     const [hidden, setHidden] = useState(true)
     useEffect(() => {
         (async () => {
-            const res = await fetch(`${proto}://${address}:${port}/api/tags`)
+            const res = await fetch(`${ollamaURL}/api/tags`)
             const data = await res.json() as { models: { name: string, model: string }[] }
             setAvailableModels(data.models.map(m => m.model))
         })()

@@ -1,10 +1,12 @@
-import { useEffect, useState, type KeyboardEvent } from "react";
+import { useContext, useEffect, useState, type KeyboardEvent } from "react";
 import type { Route } from "./+types/home";
 import "./home.less"
 import ChatItem from "~/ChatItem";
 import ChatInput from "~/ChatInput";
 import ModelSelector from "~/ModelSelector";
-import { address, port, proto } from "~/backend";
+import TopDock from "~/TopDock";
+import Content from "~/Content";
+import { OllamaServerContext } from "~/OllamaServerContext";
 
 export function meta({ }: Route.MetaArgs) {
   return [
@@ -14,6 +16,8 @@ export function meta({ }: Route.MetaArgs) {
 }
 
 export default function Home() {
+  
+  const { ollamaURL } = useContext(OllamaServerContext)
 
   const [history, setHistory] = useState<OllamaHistoryItem[]>([
     { role: "assistant", content: "Hello, I'm your personal assistant!", errored: false },
@@ -31,6 +35,7 @@ export default function Home() {
   async function Send(values: { text: string, attachments: { rawUrl: string, url: string }[] }) {
     if (modelIsWriting) return false;
     setModelIsWriting(true)
+    window.scrollTo({ top: 800000000, behavior: "smooth" })
 
     let userIsScrolling = false
     let userIsScrollingTimeout: NodeJS.Timeout = setTimeout(() => null, 1000)
@@ -57,7 +62,7 @@ export default function Home() {
     setHistory(mock)
 
     try {
-      const res = await fetch(`${proto}://${address}:${port}/api/chat`, {
+      const res = await fetch(`${ollamaURL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -78,8 +83,11 @@ export default function Home() {
         let chunk = "[" + decoder.decode(value, { stream: true }).replace(/\n/g, ",")
         if (chunk.endsWith(",")) chunk = chunk.slice(0, chunk.length - 1)
         chunk += "]"
-        mock[mock.length - 1].content += JSON.parse(chunk).reduce((ac: string, next: OllamaChatResponseChunk) => ac + next.message.content, "")
+        console.log(chunk)
+        if (!mock[mock.length - 1].content) mock[mock.length - 1].content = ""
+        mock[mock.length - 1].content += JSON.parse(chunk).reduce((ac: string, next: OllamaChatResponseChunk) => next.error ? (ac + next.error) : (ac + next.message?.content), "")
         mock = [...mock]
+        console.log(mock)
         const scrollOnBottom = window.scrollY + window.innerHeight >= document.body.clientHeight - 300
         setHistory(mock)
 
@@ -97,7 +105,7 @@ export default function Home() {
     catch (error) {
       console.error(error)
       mock[mock.length - 1].errored = true
-      mock[mock.length - 1].content = "" + error
+      // mock[mock.length - 1].content = "" + error
       mock = [...mock]
       setHistory(mock)
       setModelIsWriting(false)
@@ -110,16 +118,16 @@ export default function Home() {
 
   return <>
     <main className="openedD">
-      <header className="t-dock">
+      <TopDock>
         <ModelSelector onChange={setModel} onLoad={setModel}></ModelSelector>
-      </header>
+      </TopDock>
       <header className="b-dock">
         <ChatInput onSubmit={Send}></ChatInput>
       </header>
       <nav className="chat-list">
         <div className="inner"></div>
       </nav>
-      <div className="main-content">
+      <Content>
         <div className="chat">
           {/* <ChatItem message={{ content: ``, role: "assistant", errored: false }}></ChatItem> */}
           {
@@ -129,7 +137,7 @@ export default function Home() {
             })
           }
         </div>
-      </div>
+      </Content>
     </main>
   </>
 }
