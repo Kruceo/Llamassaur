@@ -9,6 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.less";
+import OllamaServerProvider, { OllamaContextLoader } from "./OllamaServerContext";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,6 +25,7 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+
   return (
     <html lang="en">
       <head>
@@ -33,7 +35,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <OllamaServerProvider>
+          <OllamaContextLoader>
+            {children}
+          </OllamaContextLoader>
+        </OllamaServerProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
