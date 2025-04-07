@@ -72,8 +72,9 @@ export default function ChatInput(props: ChatInputProps) {
                 }}
             />
             <input
+            disabled={blocked}
                 name="attachments-input" id="attachments-input"
-                accept=".jpeg,.png,.jpg"
+                accept=".jpeg,.png,.jpg,.JPEG,.JPG,.PNG"
                 hidden className="chat-attachment-input" type="file" onChange={async (e) => {
                     const reader = new FileReader()
                     const file = (e.target.files as FileList)[0]

@@ -10,7 +10,7 @@ export default function ChatItem(props: { message: OllamaHistoryItem, isWriting?
     return <div className={`chat-item ${props.message.role} ${props.message.errored ? "errored" : ""} ${props.isWriting ? "writing" : ""}`}>
         {
 
-            content == "" ?
+            content == "" && !props.message.errored ?
                 <span className="loader"></span>
                 :
                 <div className="markdown" style={{ whiteSpace: props.isWriting ? "break-spaces" : "initial" }}>
@@ -18,20 +18,23 @@ export default function ChatItem(props: { message: OllamaHistoryItem, isWriting?
                         !props.message.__extra || !props.message.__extra.rawImages ? null :
                             props.message.__extra.rawImages.map(img => <img className="markdown img image" src={img} />)
                     }
-                    {!props.isWriting ?
-                        <div dangerouslySetInnerHTML={
-                            {
-                                __html:
-                                    defaultParser.parse(content)
-                                        .replace(/\n/gs, "<#@nsbp@#>")
-                                        .replace(/(<#@nsbp@#>)+/, "")
-                                        .replace(/<#@nsbp@#>/g, "\n")
-                            }
-                        }></div>
-                        : content
+                    {
+                        !props.isWriting ?
+                            <div dangerouslySetInnerHTML={
+                                {
+                                    __html:
+                                        defaultParser.parse(content)
+                                            .replace(/\n/gs, "<#@nsbp@#>")
+                                            .replace(/(<#@nsbp@#>)+/, "")
+                                            .replace(/<#@nsbp@#>/g, "\n")
+                                }
+                            }></div>
+                            : content
                     }
                 </div>
-
+        }
+        {
+            props.message.errored ? <p>Hmm... something went wrong while loading this message. Try again later!</p> : null
         }
     </div>
 }

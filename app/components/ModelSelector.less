@@ -1,4 +1,4 @@
-@import "./pallete.less";
+@import "../pallete.less";
 
 #model-selector {
     cursor: pointer;
@@ -14,29 +14,41 @@
     font-weight: 800;
     position: relative;
     text-transform: capitalize;
+    background: none;
 
-    .selected-model-tag {
-        text-transform: uppercase;
-        background: linear-gradient(45deg, @color1, @color5);
-        color: @onColor1;
-        padding: 4px;
-        margin-left: 4px;
-        border-radius: 4px;
+    .selected {
+        display: inline-block;
+
+        .selected-model-tag {
+            text-transform: uppercase;
+            background: linear-gradient(45deg, @color1, @color5);
+            color: @onColor1;
+            padding: 4px;
+            margin-left: 4px;
+            border-radius: 4px;
+        }
+
+        &:not(:has(~.hidden)){
+            animation: pop 250ms ease-in-out forwards;
+        }
     }
 
+
     .list-frame {
+        
         position: absolute;
         top: 100%;
         left: 0;
         margin-top: 24px;
 
         max-height: 300px;
-        background-color: darken(@color3, 5);
+        background-color: @color4;
         overflow: hidden;
         border-radius: 16px;
-        border: @border;
+        outline: @border;
         transition: opacity 150ms 0ms ease-in-out, display 0s 150ms linear;
         box-shadow: #0001 5px 5px 30px;
+
         &.hidden {
             transition: opacity 150ms 0ms ease-in-out, visibility 0s 150ms linear;
             visibility: collapse;
@@ -49,8 +61,7 @@
             animation: list-open 250ms ease-in-out;
             display: grid;
             padding: 8px;
-            min-width: 250px;
-            max-width: 800px;
+            width: 300px;
             gap: 8px;
             overflow-y: auto;
             max-height: 200px;
@@ -62,7 +73,8 @@
                 border: none;
                 border-radius: 8px;
                 width: 100%;
-                background-color: transparent;
+                background: transparent;
+                display: block;
                 color: @onColor1;
                 padding: 16px 24px;
 
@@ -78,12 +90,13 @@
 
         .fixed-container {
             width: 100%;
-            background-color: darken(@color3,5);
+            background-color: @color4;
             // background-color: red;
-            height:fit-content;
+            height: fit-content;
             padding: 0px 8px 8px 8px;
             display: flex;
             justify-content: center;
+
             .more-models {
                 text-align: start;
                 cursor: pointer;
@@ -91,7 +104,7 @@
                 border: none;
                 border-radius: 8px;
                 width: 100%;
-               
+
                 background-color: transparent;
                 color: @onColor1;
                 padding: 16px 24px;
@@ -107,7 +120,7 @@
         }
     }
 
-    
+
 
     ::-webkit-scrollbar-track {
         background: transparent;
@@ -121,18 +134,46 @@
     &:hover {
         ::-webkit-scrollbar {
             width: 30px;
-        height: 30px;
+            height: 30px;
         }
     }
 
     ::-webkit-scrollbar-thumb {
         background: #888;
         border-radius: 16px;
-        border: calc(16px - 8px) solid darken(@color3, 5);
+        border: calc(16px - 8px) solid @color4;
     }
 
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
 
+    .list-model-name{
+        margin-right: 6px;
+        text-transform: capitalize;
+    }
+    .list-model-tag{
+        background: linear-gradient(45deg, @color1 0%, @color5 50%);
+        background-clip: text;
+        color: transparent;
+        text-transform: capitalize;
+    }
+}
+
+@keyframes pop {
+    0% {
+        scale: 1;
+    }
+
+    25% {
+        scale: 1.05;
+    }
+
+    55% {
+        scale: 0.95;
+    }
+
+    100% {
+        scale: 1;
+    }
 }

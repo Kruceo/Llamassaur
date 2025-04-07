@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import "./ModelSelector.less";
 import { Link } from "react-router";
-import {OllamaServerContext} from "./OllamaServerContext";
+import { OllamaServerContext } from "../OllamaServerContext";
 
 export default function (props: { onChange?: (model: string) => void, onLoad?: (model: string) => void }) {
     const { ollamaURL } = useContext(OllamaServerContext)
@@ -27,18 +27,30 @@ export default function (props: { onChange?: (model: string) => void, onLoad?: (
     const [modelName, modelTag] = model.split(":")
 
     return <button id="model-selector" onClick={() => setHidden(!hidden)}>
-        {formatModelName(modelName)}<span className="selected-model-tag">{modelTag}</span>
+        <p className="selected">
+            <span className="model-name">{formatModelName(modelName)}</span><span className="selected-model-tag">{modelTag}</span>
+        </p>
         <div className={`list-frame ${hidden ? "hidden" : ""}`}>
             <div className={`list`}>
-                {availableModels.map(modelName => <button key={modelName} onClick={() => { setModel(modelName); props.onChange?.call({}, modelName) }}>{formatModelName(modelName)}</button>)}
+                {availableModels.map(modelName => <button key={modelName} onClick={() => { setModel(modelName); props.onChange?.call({}, modelName) }}>
+                    <ListModelName raw={modelName}/>
+                </button>)}
             </div>
             <div className="fixed-container">
                 <Link to={"/moremodels"} className="more-models">More Models</Link>
             </div>
-        </div>
+        </div> 
     </button>
 }
 
 function formatModelName(str: string) {
     return str.replace(/_|-/g, " ").replace(/^.*?\//, "")
+}
+
+function ListModelName(props:{raw:string}){
+    const [name,tag] = formatModelName(props.raw).split(":")
+    return <>
+    <span className="list-model-name">{name}</span>
+    <span className="list-model-tag">{tag}</span>
+    </>
 }

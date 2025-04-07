@@ -1,27 +1,27 @@
 import { useContext, useEffect, useState, type KeyboardEvent } from "react";
 import type { Route } from "./+types/home";
 import "./home.less"
-import ChatItem from "~/ChatItem";
-import ChatInput from "~/ChatInput";
-import ModelSelector from "~/ModelSelector";
-import TopDock from "~/TopDock";
-import Content from "~/Content";
+import ChatItem from "~/components/ChatItem";
+import ChatInput from "~/components/ChatInput";
+import ModelSelector from "~/components/ModelSelector";
+import TopDock from "~/components/TopDock";
+import Content from "~/components/Content";
 import { OllamaServerContext } from "~/OllamaServerContext";
 
 export function meta({ }: Route.MetaArgs) {
   return [
-    { title: "Kruceo - Chat" },
+    { title: "Chat" },
     { name: "description", content: "Chat with several LLM's" },
   ];
 }
 
 export default function Home() {
-  
-  const { ollamaURL } = useContext(OllamaServerContext)
 
+  const { ollamaURL } = useContext(OllamaServerContext)
   const [history, setHistory] = useState<OllamaHistoryItem[]>([
     { role: "assistant", content: "Hello, I'm your personal assistant!", errored: false },
-    // { role: "user", content: "Use this format '{color}' as prefix to tag words which you want fill, use hex format to choose the color, words like corporation names or places, use colors from this corporations or places", errored: false }
+    // { role: "user", content: "Use this format '{color}' as prefix to tag words which you want fill, use hex format to choose the color, words like corporation names or places, use colors from this corporations or places", errored: false },
+    // { role: "assistant", content: test, errored: false }
   ])
   const [model, setModel] = useState("deepseek-r1:1.5b")
   const [modelIsWriting, setModelIsWriting] = useState(false)
@@ -30,6 +30,13 @@ export default function Home() {
       // console.log(window.scrollY + window.innerHeight, document.body.clientHeight - 400)
     }, 1000 / 30);
     return () => clearInterval(inter)
+  }, [])
+
+  const [showConfig, setShowConfig] = useState<boolean>(false)
+  useEffect(() => {
+    if (!window.localStorage.getItem("first-time")) {
+      setShowConfig(true)
+    }
   }, [])
 
   async function Send(values: { text: string, attachments: { rawUrl: string, url: string }[] }) {
@@ -114,12 +121,18 @@ export default function Home() {
     }
   }
 
-
+  const { setOllamaAddress, setOllamaPort, setOllamaProto, ollamaPort } = useContext(OllamaServerContext)
 
   return <>
+
     <main className="openedD">
       <TopDock>
         <ModelSelector onChange={setModel} onLoad={setModel}></ModelSelector>
+        <button className="settings" onClick={()=>setShowConfig(!showConfig)}>
+          <span className="material-symbols-outlined">
+            settings
+          </span>
+        </button>
       </TopDock>
       <header className="b-dock">
         <ChatInput onSubmit={Send}></ChatInput>
@@ -139,5 +152,37 @@ export default function Home() {
         </div>
       </Content>
     </main>
+    {
+        <div className={`configurator ${showConfig?"":"hidden"}`} >
+          <form onSubmit={(e) => {
+            e.preventDefault()
+            const data = new FormData(e.currentTarget)
+            const address = data.get("address")
+            const port = data.get("port")
+
+            if (!port || !address) return alert('BAD PORT OR ADDRESS')
+
+            setOllamaPort(port.toString())
+            setOllamaAddress(address.toString())
+            setShowConfig(false)
+            window.localStorage.setItem("first-time", "false")
+            window.location.reload()
+          }}>
+            <h2>Configuration</h2>
+            <p>You will want point this to your OLLAMA API.</p>
+            <div className="address">
+              <div>
+                <label htmlFor="address">Address</label>
+                <input required name="address" placeholder="Eg. 192.168.0.25" type="text" defaultValue={window.localStorage.getItem("ollama-address")??undefined} ></input>
+              </div>
+              <div>
+                <label htmlFor="port">Port</label>
+                <input required name='port' placeholder="Eg. 11434" min={1} max={2 ** 16} type="number" defaultValue={window.localStorage.getItem("ollama-port")??undefined} ></input>
+              </div>
+            </div>
+            <button type="submit">Finish</button>
+          </form>
+        </div>
+    }
   </>
 }
