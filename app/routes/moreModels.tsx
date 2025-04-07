@@ -17,7 +17,7 @@ export function meta({ }: Route.MetaArgs) {
 
 
 export default function () {
-    const { ollamaURL } = useContext(OllamaServerContext)
+    const { ollamaURL,downloadModel } = useContext(OllamaServerContext)
     interface ModelButtonData {
         name: string,
         tag: string,
@@ -67,7 +67,7 @@ export default function () {
             <Link to="/">Chat</Link>
         </TopDock>
         <Content>
-            {/* <h2>Get a Custom Model</h2>
+            <h2>Get a Custom Model</h2>
             <p>You can find a variety of models in <a href="https://ollama.com/library">Ollama Website</a></p>
             <br></br>
             <div className="custom-model-input-container">
@@ -75,7 +75,7 @@ export default function () {
                 {
                     currentCustomChunk ? <div className="custom-chunk-data">{currentCustomChunk.status}</div> : null
                 }
-            </div> */}
+            </div>
             <h2>Recommended</h2>
             <p>A list of well-known models</p>
             <div className="list">
