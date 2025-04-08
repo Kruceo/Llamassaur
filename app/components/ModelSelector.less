@@ -18,7 +18,8 @@
 
     .selected {
         display: inline-block;
-
+        background:transparent;
+        text-transform: capitalize;
         .selected-model-tag {
             text-transform: uppercase;
             background: linear-gradient(45deg, @color1, @color5);
@@ -50,7 +51,7 @@
         box-shadow: #0001 5px 5px 30px;
 
         &.hidden {
-            transition: opacity 150ms 0ms ease-in-out, visibility 0s 150ms linear;
+            transition: opacity 150ms 150ms ease-in-out, visibility 0s 300ms linear;
             visibility: collapse;
             // background-color: red;
             opacity: 0;

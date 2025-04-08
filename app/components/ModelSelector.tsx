@@ -2,55 +2,74 @@ import { useContext, useEffect, useState } from "react";
 import "./ModelSelector.less";
 import { Link } from "react-router";
 import { OllamaServerContext } from "../OllamaServerContext";
+import { CloudflareModel, defaultCloudflareModel, Model, OllamaModel } from "~/models";
 
-export default function (props: { onChange?: (model: string) => void, onLoad?: (model: string) => void }) {
+export default function (props: { onChange?: (model: Model) => void, onLoad?: (model: Model) => void }) {
     const { ollamaURL } = useContext(OllamaServerContext)
-    const [availableModels, setAvailableModels] = useState<string[]>([])
-    const [model, setModel] = useState("")
+    const [availableModels, setAvailableModels] = useState<Model[]>([])
+    const [model, setModel] = useState<Model>()
     const [hidden, setHidden] = useState(true)
+
     useEffect(() => {
         (async () => {
             const res = await fetch(`${ollamaURL}/api/tags`)
             const data = await res.json() as { models: { name: string, model: string }[] }
-            setAvailableModels(data.models.map(m => m.model))
+            const newAvailableModels: Model[] = data.models.map(m => {
+                return new OllamaModel(m.model, ollamaURL)
+            })
+            newAvailableModels.push(defaultCloudflareModel)
+            setAvailableModels(newAvailableModels)
         })()
+
         const loadedModelStr = window.localStorage.getItem("prefer-model")
+        const loadedModelType = window.localStorage.getItem("prefer-model-type") ?? "ollama"
+
+        // load model stored in browser local-storage
         if (loadedModelStr) {
-            props.onLoad?.call({}, loadedModelStr) //(loadedModelStr)
-            setModel(loadedModelStr)
+            if (loadedModelType == "ollama") {
+                const m = new OllamaModel(loadedModelStr, ollamaURL)
+                setModel(m)
+                props.onLoad?.call({}, m)
+            } else if (loadedModelType == "cloudflare-default") {
+                const m = defaultCloudflareModel
+                setModel(m)
+                props.onLoad?.call({}, m)
+            }
         }
     }, [])
     useEffect(() => {
-        window.localStorage.setItem("prefer-model", model)
+        if (!model) return
+        window.localStorage.setItem("prefer-model", model.name)
+        window.localStorage.setItem("prefer-model-type", model.type)
     }, [model])
 
-    const [modelName, modelTag] = model.split(":")
+    const [modelName, modelTag] = (model?.name ?? "No name:No Tag").split(":")
 
-    return <button id="model-selector" onClick={() => setHidden(!hidden)}>
-        <p className="selected">
+    return <div tabIndex={0} id="model-selector"  >
+        <button className="selected" onFocus={()=>setHidden(false)} onBlur={()=>setHidden(true)}>
             <span className="model-name">{formatModelName(modelName)}</span><span className="selected-model-tag">{modelTag}</span>
-        </p>
+        </button>
         <div className={`list-frame ${hidden ? "hidden" : ""}`}>
             <div className={`list`}>
-                {availableModels.map(modelName => <button key={modelName} onClick={() => { setModel(modelName); props.onChange?.call({}, modelName) }}>
-                    <ListModelName raw={modelName}/>
+                {availableModels.map(model => <button key={model.name + model.type} onClick={() => { setModel(model); props.onChange?.call({}, model) }}>
+                    <ListModelName raw={model.name} />
                 </button>)}
             </div>
             <div className="fixed-container">
                 <Link to={"/moremodels"} className="more-models">More Models</Link>
             </div>
-        </div> 
-    </button>
+        </div>
+    </div>
 }
 
 function formatModelName(str: string) {
     return str.replace(/_|-/g, " ").replace(/^.*?\//, "")
 }
 
-function ListModelName(props:{raw:string}){
-    const [name,tag] = formatModelName(props.raw).split(":")
+function ListModelName(props: { raw: string }) {
+    const [name, tag] = formatModelName(props.raw).split(":")
     return <>
-    <span className="list-model-name">{name}</span>
-    <span className="list-model-tag">{tag}</span>
+        <span className="list-model-name">{name}</span>
+        <span className="list-model-tag">{tag}</span>
     </>
 }

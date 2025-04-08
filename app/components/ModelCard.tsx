@@ -1,31 +1,32 @@
-import { useContext, useEffect, useState } from "react"
-import { OllamaServerContext } from "../OllamaServerContext"
+import { useEffect, useState } from "react"
 import "./ModelCard.less"
-export default function (props: { pullData?: OllamaPullResponseChunk, rawString: string, vision?: boolean, name: string, desc?: string, tag: string, installed?: boolean, disableDownload?: boolean }) {
-    const { name, desc, tag, rawString, vision } = props
-    
-    const [pullData, setPullData] = useState(props.pullData)
-    useEffect(() => { setPullData(props.pullData) }, [props.pullData])
+import type { Model } from "~/models"
+export default function (props: { model: Model, status: string, vision?: boolean, desc?: string, installed?: boolean, disableDownload?: boolean, disableDelete?: boolean }) {
+    const { desc, vision } = props
 
-    const installed = props.installed || props.pullData?.status == "Already Installed"
+    const [status, setStatus] = useState(props.status)
+    useEffect(() => { setStatus(props.status) }, [props.status])
 
-    const { downloadModel,deleteModel } = useContext(OllamaServerContext)
+    useEffect(() => {
+        const id = props.model.addOnStatusChangeListener(setStatus)
+        return () => props.model.removeOnStatusChangeListener(id.toString())
+    }, [])
 
+    const installed = props.installed || status == "Already Installed"
 
     async function downloadButtonHandler() {
-        if (pullData?.status == "Already Installed" || /Success|Pulling/.test(pullData?.status ?? "")) return
-        await downloadModel(rawString, (chunk) => {
-            setPullData(chunk)
-        })
+        if (status == "Already Installed" || /success|pulling/.test(status ?? "")) return
+        await props.model.download()
     }
 
     async function deleteButtonHandler() {
-        await deleteModel(rawString, (chunk) => {
-            setPullData(chunk)
-        })
+        if (status != "Removed")
+            props.model.delete()
     }
 
-    return <div id={`model-card`} className={`${pullData?.status == "Removed"?"removed":""}`}>
+    const [name, tag] = formatModelName(props.model.name).split(":")
+
+    return <div id={`model-card`} className={`${status == "Removed" ? "removed" : ""}`}>
         <div className="main">
             <span className="name">{name}</span>
             <span className="tag">{tag}</span>
@@ -33,22 +34,18 @@ export default function (props: { pullData?: OllamaPullResponseChunk, rawString:
                 vision ?
                     <span className="vision">
                         <span className="material-symbols-outlined">
-                        visibility
+                            visibility
                         </span>
                     </span>
                     : null
             }
-            {!pullData ? null :
-                <>
-                    {
-                        <span className="status">{pullData?.status}</span>
-                    }
-                    {
-                        !pullData.completed || !pullData.total ? null :
-                            <span className="stage">{(pullData.completed / 1000 / 1000).toFixed(0)} / {(pullData.total / 1000 / 1000).toFixed(0)} MB</span>
-                    }
-                </>
-            }
+
+            <>
+                {
+                    <span style={{display:status==""?"none":"inline-block"}} className="status">{status}</span>
+                }
+            </>
+
         </div>
         {
             desc ?
@@ -66,14 +63,20 @@ export default function (props: { pullData?: OllamaPullResponseChunk, rawString:
                     :
                     null
             }
-
-            <button onClick={deleteButtonHandler} disabled={!installed}>
-                Delete <span className="material-symbols-outlined">
-                    delete
-                </span>
-            </button>
-
+            {
+                !props.disableDelete ?
+                    <button onClick={deleteButtonHandler} disabled={!installed}>
+                        Delete <span className="material-symbols-outlined">
+                            delete
+                        </span>
+                    </button>
+                    : null
+            }
         </div>
     </div >
 }
 
+
+function formatModelName(str: string) {
+    return str.replace(/_|-/g, " ").replace(/^.*?\//, "")
+}

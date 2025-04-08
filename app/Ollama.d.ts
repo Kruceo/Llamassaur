@@ -1,4 +1,4 @@
-type OllamaRoles = "user" | "assistant"
+type OllamaRoles = "user" | "assistant" | "system"
 
 interface OllamaHistoryItem {
   role: OllamaRoles,
