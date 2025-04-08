@@ -12,13 +12,18 @@ export default function (props: { onChange?: (model: Model) => void, onLoad?: (m
 
     useEffect(() => {
         (async () => {
-            const res = await fetch(`${ollamaURL}/api/tags`)
-            const data = await res.json() as { models: { name: string, model: string }[] }
-            const newAvailableModels: Model[] = data.models.map(m => {
-                return new OllamaModel(m.model, ollamaURL)
-            })
-            newAvailableModels.push(defaultCloudflareModel)
-            setAvailableModels(newAvailableModels)
+            try {
+                const res = await fetch(`${ollamaURL}/api/tags`)
+                const data = await res.json() as { models: { name: string, model: string }[] }
+                const newAvailableModels: Model[] = data.models.map(m => {
+                    return new OllamaModel(m.model, ollamaURL)
+                })
+                newAvailableModels.push(defaultCloudflareModel)
+                setAvailableModels(newAvailableModels)
+            } catch (error) {
+                setAvailableModels([defaultCloudflareModel])
+            }
+
         })()
 
         const loadedModelStr = window.localStorage.getItem("prefer-model")
@@ -46,7 +51,7 @@ export default function (props: { onChange?: (model: Model) => void, onLoad?: (m
     const [modelName, modelTag] = (model?.name ?? "No name:No Tag").split(":")
 
     return <div tabIndex={0} id="model-selector"  >
-        <button className="selected" onFocus={()=>setHidden(false)} onBlur={()=>setHidden(true)}>
+        <button className="selected" onFocus={() => setHidden(false)} onBlur={() => setHidden(true)}>
             <span className="model-name">{formatModelName(modelName)}</span><span className="selected-model-tag">{modelTag}</span>
         </button>
         <div className={`list-frame ${hidden ? "hidden" : ""}`}>
