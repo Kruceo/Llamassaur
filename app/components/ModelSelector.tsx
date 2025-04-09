@@ -7,7 +7,7 @@ import { CloudflareModel, defaultCloudflareModel, Model, OllamaModel } from "~/m
 export default function (props: { onChange?: (model: Model) => void, onLoad?: (model: Model) => void }) {
     const { ollamaURL } = useContext(OllamaServerContext)
     const [availableModels, setAvailableModels] = useState<Model[]>([])
-    const [model, setModel] = useState<Model>()
+    const [model, setModel] = useState<Model>(defaultCloudflareModel)
     const [hidden, setHidden] = useState(true)
 
     useEffect(() => {
